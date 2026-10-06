@@ -1,0 +1,13 @@
+:root {
+    --bg: #16171d;
+    --text: #f3f4f6;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+}
+
+#root {
+    min-height: 100vh;
+}
