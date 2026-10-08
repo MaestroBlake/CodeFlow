@@ -1,6 +1,13 @@
 import Editor from "@monaco-editor/react"
 function CodeEditor(props) {
-
+    if(!props.file){
+        return (
+            <div className="panel">
+                <h3>Code Editor</h3>
+                <p>No file selected</p>
+            </div>
+        )
+    }
     return (
         <div className="panel">
             <h3>Code Editor</h3>

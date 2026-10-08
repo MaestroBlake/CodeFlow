@@ -5,15 +5,15 @@ import { useState } from "react";
 function IDE(){
     const [files,setFiles]=useState({
         "App.jsx":{
-            language:"Javascript",
+            language:"javascript",
             content:"//Appcode"
         },
         "Header.jsx":{
-            language:"C++",
+            language:"typescript",
             content:"//Header code"
         },
         "IDE.jsx":{
-            language:"Python",
+            language:"python",
             content:"//IDE code"
         }
     })
@@ -22,7 +22,11 @@ function IDE(){
     return (
         <main>
            
-            <FileExplorer onFileSelect={setSelectedFile}/>
+            <FileExplorer onFileSelect={setSelectedFile}
+            files={files}
+            setFiles={setFiles}
+            selectedFile={selectedFile}
+            />
             <CodeEditor selectedFile={selectedFile}
             file={files[selectedFile]}
             files={files}
