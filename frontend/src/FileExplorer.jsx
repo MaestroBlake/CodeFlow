@@ -1,6 +1,7 @@
 import {useState} from "react";
 function FileExplorer(props) {
     const[newFileName,setNewFileName]=useState("");
+    const[renameFileName,setRenameFileName]=useState("");
  function getLanguage(fileName){   if(fileName.endsWith(".cpp")){
         return "cpp"
     }
@@ -44,6 +45,19 @@ function FileExplorer(props) {
        })
        props.onFileSelect(newFileName)
     }
+    function renameFile(){
+        const oldName=props.selectedFile
+        const newName=renameFileName.trim()
+        const newFiles={...props.files};
+        newFiles[newName]=
+        {...newFiles[oldName],
+            language:getLanguage(newName)
+        }
+        delete newFiles[oldName]
+        props.setFiles(newFiles)
+    props.onFileSelect(newName)
+    setRenameFileName("")
+    }
     return (
         <div className="panel">
             <h3>Files</h3>
@@ -51,12 +65,16 @@ function FileExplorer(props) {
             value={newFileName}
             onChange={(event)=>setNewFileName(event.target.value)}
             />
+            <input placeholder="New filename"
+            value={renameFileName}
+            onChange={(event)=>setRenameFileName(event.target.value)}/>
             <button
                 onClick={createFile}>
                 Create File</button>
                 <button onClick={deleteFile}>
                     Delete File
                 </button>
+                <button onClick={renameFile}>Rename file</button>
             <p>src</p>
           {Object.keys(props.files).map((fileName)=>(
             <p
