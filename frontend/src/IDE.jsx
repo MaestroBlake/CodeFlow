@@ -27,11 +27,14 @@ function IDE(){
             setFiles={setFiles}
             selectedFile={selectedFile}
             />
+            <div className="workspace">
             <CodeEditor selectedFile={selectedFile}
             file={files[selectedFile]}
             files={files}
             setFiles={setFiles} />
+            
             <Terminal/>
+            </div>
           
         </main>
         
