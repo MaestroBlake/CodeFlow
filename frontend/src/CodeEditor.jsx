@@ -4,13 +4,24 @@ function CodeEditor(props) {
         return (
             <div className="panel">
                 <h3>Code Editor</h3>
+
                 <p>No file selected</p>
             </div>
         )
     }
+    function runCode(){
+        props.setTerminalOutput([
+            `Running File:${props.selectedFile}`,
+            "Code:",
+            props.file.content
+        ]);
+    }
     return (
         <div className="panel">
             <h3>Code Editor</h3>
+            <button onClick={runCode}>
+                Run
+            </button>
             <p>Selected file:{props.selectedFile}</p>
             <Editor 
             height="400px"
@@ -26,7 +37,7 @@ function CodeEditor(props) {
             />
             <p>Language:{props.file.language}</p>
             <p>Code:{props.file.content}</p>
-            
+           
         </div>
     )
 }

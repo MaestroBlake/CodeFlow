@@ -1,4 +1,4 @@
-function Terminal() {
+function Terminal(props) {
     return (
         <div className="panel terminal">
             <div className="terminal-header">
@@ -7,8 +7,9 @@ function Terminal() {
             </div>
 
             <div className="terminal-output">
-                <p>Welcome to CodeFlow Terminal</p>
-                <p>Output will appear here...</p>
+                {props.output.map((line,index)=>(
+                    <p key={index}>{line}</p>
+                ))}
             </div>
         </div>
     )

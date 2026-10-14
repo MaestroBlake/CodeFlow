@@ -18,7 +18,7 @@ function IDE(){
         }
     })
     const [selectedFile,setSelectedFile]=useState("App.jsx");
-    
+    const[terminalOutput,setTerminalOutput]=useState([]);
     return (
         <main>
            
@@ -31,9 +31,12 @@ function IDE(){
             <CodeEditor selectedFile={selectedFile}
             file={files[selectedFile]}
             files={files}
-            setFiles={setFiles} />
+            setFiles={setFiles}
+            setTerminalOutput={setTerminalOutput} />
             
-            <Terminal/>
+            <Terminal
+            output={terminalOutput}
+            setOutput={setTerminalOutput}/>
             </div>
           
         </main>
