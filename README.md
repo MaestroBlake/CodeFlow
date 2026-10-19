@@ -6,4 +6,9 @@ Project Goals
 2.Implement a file explorer and project manager.
 3. AI inline suggestion system using Ollamma.
 4. Code execution
+<<<<<<< Updated upstream
 5. Containerized enviorment using Docker.
+=======
+5. Containerized enviorment using Docker.
+(edited)
+>>>>>>> Stashed changes
