@@ -20,7 +20,7 @@ header{
   text-align: center;
 }
 header h1{
-  color:white;
+  color:rgb(19, 29, 178);
 }
 main {
     display: flex;
@@ -54,7 +54,7 @@ main {
 .terminal {
   display:flex;
   flex-direction: column;
-  background-color:  #1e1e1e;
+  background-color:  #0d1a00;
   color: #d4d4d4;
 }
 .panel{
