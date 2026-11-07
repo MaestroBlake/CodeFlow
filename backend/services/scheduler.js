@@ -1,27 +1,38 @@
 const { executeProcess } = require("./executionManager");
 const readyQueue = [];
+let isRunning=false;
 console.log("Execution Manager exports:", Object.keys(require("./executionManager")));
 console.log("executeProcess type:", typeof executeProcess);
 function addToQueue(process) {
     readyQueue.push(process);
 
     console.log(`Process ${process.processId} added to Ready Queue`);
-}
-async function dispatchNextProcess() {
 
-    if (readyQueue.length === 0) {
-        console.log("No processes waiting in Ready Queue");
-        return null;
+    startScheduler();
+}
+async function startScheduler() {
+
+    if (isRunning) {
+        return;
     }
 
-    const process = readyQueue.shift();
+    isRunning = true;
 
-    console.log(`Dispatching Process ${process.processId}`);
+    while (readyQueue.length > 0) {
 
-    const result = await executeProcess(process);
+        const process = readyQueue.shift();
 
-    return result;
+        console.log(`Dispatching Process ${process.processId}`);
+
+        await executeProcess(process);
+
+    }
+
+    isRunning = false;
+
+    console.log("Scheduler idle. No pending processes.");
 }
+
 
 function getNextProcess() {
     if (readyQueue.length === 0) {
@@ -39,5 +50,5 @@ module.exports = {
     addToQueue,
     getNextProcess,
     getQueue,
-    dispatchNextProcess
+   
 };

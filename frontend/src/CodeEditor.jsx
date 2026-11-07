@@ -1,7 +1,7 @@
+import React from "react";
 import Editor from "@monaco-editor/react";
-
 function CodeEditor(props) {
-
+const [stdin, setStdin] = React.useState("");
 
 if (!props.file) {
     return (
@@ -13,9 +13,12 @@ if (!props.file) {
 }
 
 async function runCode() {
+
     props.setTerminalOutput(["Submitting code to backend..."]);
 
     try {
+
+        // Submit code
         const response = await fetch("http://localhost:5000/api/executions", {
             method: "POST",
             headers: {
@@ -24,7 +27,7 @@ async function runCode() {
             body: JSON.stringify({
                 language: props.file.language,
                 code: props.file.content,
-                stdin: ""
+               stdin: stdin
             })
         });
 
@@ -34,24 +37,70 @@ async function runCode() {
             throw new Error(data.error || "Request failed");
         }
 
+        const processId = data.process.processId;
+
         props.setTerminalOutput([
-            "Process submitted successfully!",
-            `Process ID: ${data.process.processId}`,
-            `Language: ${data.process.language}`,
-            `Status: ${data.process.status}`
+            `Process ID: ${processId}`,
+            "Status: READY"
         ]);
 
+        
+        while (true) {
+
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            const statusResponse = await fetch(
+                `http://localhost:5000/api/processes/${processId}`
+            );
+
+            const statusData = await statusResponse.json();
+
+            if (!statusResponse.ok) {
+                throw new Error(statusData.error || "Status request failed");
+            }
+
+            const process = statusData.process;
+
+           props.setTerminalOutput([
+    `Process ID: ${processId}`,
+    `Language: ${process.language}`,
+    `Status: ${process.status}`,
+    "",
+    "Output:",
+    process.stdout || "(No output)",
+    "",
+    "Errors:",
+    process.stderr || "(No errors)",
+    "",
+    `Exit Code: ${process.exitCode ?? "Pending"}`
+]);
+
+            if (
+                process.status === "COMPLETED" ||
+                process.status === "FAILED"
+            ) {
+                break;
+            }
+        }
+
     } catch (error) {
+
         props.setTerminalOutput([
             `Error: ${error.message}`
         ]);
+
     }
 }
 
 return (
     <div className="panel">
         <h3>Code Editor</h3>
-
+        <textarea
+    placeholder="Enter program input here..."
+    value={stdin}
+    onChange={(e) => setStdin(e.target.value)}
+    rows={4}
+/>
         <button onClick={runCode}>
             Run
         </button>

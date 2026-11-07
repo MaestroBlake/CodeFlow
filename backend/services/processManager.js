@@ -17,7 +17,13 @@ function createProcess({language,code,stdin=""}){
 function getAllProcesses() {
     return processes;
 }
+function getProcessById(processId) {
+    return processes.find(
+        process => process.processId === Number(processId)
+    );
+}
 module.exports={
     createProcess,
-    getAllProcesses
+    getAllProcesses,
+    getProcessById
 };
