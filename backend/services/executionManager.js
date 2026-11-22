@@ -1,3 +1,4 @@
+const { executeCpp, executePython } = require("./dockerManager");
 async function executeProcess(process) {
 
     console.log(`Executing Process ${process.processId}`);
@@ -6,18 +7,36 @@ async function executeProcess(process) {
 
     try {
 
-        
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        let result;
 
-        process.status = "COMPLETED";
+      if (process.language === "cpp") {
+    result = await executeCpp(process.code, process.stdin);
+} 
+else if (process.language === "python") {
+    result = await executePython(process.code, process.stdin);
+} 
+else {
+    throw new Error(`Unsupported language: ${process.language}`);
+}
 
-        console.log(`Process ${process.processId} completed`);
+        process.stdout = result.stdout;
+        process.stderr = result.stderr;
+        process.exitCode = result.exitCode;
+
+        if (result.exitCode === 0) {
+            process.status = "COMPLETED";
+        } else {
+            process.status = "FAILED";
+        }
+
+        console.log(`Process ${process.processId}: ${process.status}`);
 
     } catch (error) {
 
         process.status = "FAILED";
+        process.stderr = error.message;
 
-        console.log(`Process ${process.processId} failed`);
+        console.log(`Process ${process.processId} failed: ${error.message}`);
 
     }
 

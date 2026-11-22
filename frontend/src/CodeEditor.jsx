@@ -2,7 +2,9 @@ import React from "react";
 import Editor from "@monaco-editor/react";
 function CodeEditor(props) {
 const [stdin, setStdin] = React.useState("");
-
+const [aiPrompt, setAiPrompt] = React.useState("");
+const [aiResponse, setAiResponse] = React.useState("");
+const [aiLoading, setAiLoading] = React.useState(false);
 if (!props.file) {
     return (
         <div className="panel">
@@ -18,7 +20,7 @@ async function runCode() {
 
     try {
 
-        // Submit code
+        
         const response = await fetch("http://localhost:5000/api/executions", {
             method: "POST",
             headers: {
@@ -91,7 +93,37 @@ async function runCode() {
 
     }
 }
+async function askAI() {
+    if (!aiPrompt.trim()) return;
 
+    setAiLoading(true);
+    setAiResponse("Thinking...");
+
+    try {
+        const response = await fetch("http://localhost:5000/api/ai/suggest", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                prompt: aiPrompt
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "AI request failed");
+        }
+
+        setAiResponse(data.response);
+
+    } catch (error) {
+        setAiResponse(`Error: ${error.message}`);
+    } finally {
+        setAiLoading(false);
+    }
+}
 return (
     <div className="panel">
         <h3>Code Editor</h3>
@@ -119,7 +151,25 @@ return (
                 }
             })}
         />
+    <div className="ai-assistant">
+    <h3>CodeFlow AI Assistant</h3>
 
+    <textarea
+        placeholder="Ask AI anything about your code..."
+        value={aiPrompt}
+        onChange={(e) => setAiPrompt(e.target.value)}
+        rows={3}
+    />
+
+    <button onClick={askAI} disabled={aiLoading}>
+        {aiLoading ? "Thinking..." : "Ask AI"}
+    </button>
+
+    <div className="ai-response">
+        <h4>AI Response</h4>
+        <pre>{aiResponse}</pre>
+    </div>
+</div>
         <p>Language: {props.file.language}</p>
         <p>Code: {props.file.content}</p>
     </div>
